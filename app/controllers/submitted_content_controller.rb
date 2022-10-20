@@ -170,14 +170,6 @@ class SubmittedContentController < ApplicationController
     @current_folder.name = FileHelper.sanitize_folder(params[:current_folder][:name]) if params[:current_folder]
     if params[:faction][:delete]
       delete_selected_files
-    elsif params[:faction][:rename]
-      rename_selected_file
-    elsif params[:faction][:move]
-      move_selected_file
-    elsif params[:faction][:copy]
-      copy_selected_file
-    elsif params[:faction][:create]
-      create_new_folder
     end
     redirect_to action: 'edit', id: @participant.id
   end
