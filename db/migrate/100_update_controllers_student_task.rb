@@ -9,7 +9,7 @@ class UpdateControllersStudentTask < ActiveRecord::Migration[4.2]
     item.name = 'student_task'
     item.save
 
-    controller = SiteController.find_or_create_by(name: 'submitted_content')
+    controller = SiteController.find_or_create_by(name: 'submitted_folder')
     controller.permission_id = perm.id
     controller.save
 

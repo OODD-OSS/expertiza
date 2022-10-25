@@ -162,7 +162,8 @@ development:
       student_team: true
       invitation: true
       password_retrieval: true
-      submitted_content: true
+      submitted_folder: true
+      submitted_hyperlink: true
       eula: true
       student_review: true
       publishing: true
@@ -434,7 +435,8 @@ test:
       student_team: true
       invitation: true
       password_retrieval: true
-      submitted_content: true
+      submitted_folder: true
+      submitted_hyperlink: true
       eula: true
       student_review: true
       publishing: true
@@ -704,7 +706,8 @@ production:
       student_team: true
       invitation: true
       password_retrieval: true
-      submitted_content: true
+      submitted_folder: true
+      submitted_hyperlink: true
       eula: true
       student_review: true
       publishing: true

@@ -54,7 +54,7 @@ function toggleFunction(elementId) {
 <button class="btn btn-default" onclick="toggleFunction('<%= @type + @participant.id.to_s%>')">Show Submission</button>
 <div id="<%= @type + @participant.id.to_s%>" style="display:none;">
 <% if @participant.team.hyperlinks.try(:length) %>
-  <%= render :partial => 'submitted_content/hyperlink', :locals => {participant: @participant, stage: @stage} %>
+  <%= render :partial => 'submitted_hyperlink/hyperlink', :locals => {participant: @participant, stage: @stage} %>
   <% else %>
  <b>No Submission</b>
 <% end %>

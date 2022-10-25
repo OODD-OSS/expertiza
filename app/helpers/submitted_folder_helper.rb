@@ -1,4 +1,4 @@
-module SubmittedContentHelper
+module SubmittedFolderHelper
   def display_directory_tree(participant, files, display_to_reviewer_flag)
     index = 0
     participant = @participant if @participant
@@ -21,10 +21,10 @@ module SubmittedContentHelper
         ret += "\n      <input type=hidden id='directories_#{index}' name='directories[#{index}]' value='#{File.dirname(file)}'>"
 
         if File.exist?(file) && File.directory?(file)
-          ret += link_to File.basename(file), :controller => 'submitted_content', :action => 'edit', :id => participant.id, 'current_folder[name]' => file
+          ret += link_to File.basename(file), :controller => 'submitted_folder', :action => 'edit', :id => participant.id, 'current_folder[name]' => file
         else
           ret += "\n      "
-          ret += link_to File.basename(file), :controller => 'submitted_content',
+          ret += link_to File.basename(file), :controller => 'submitted_folder',
                                               :action => 'download',
                                               :id => participant.id,
                                               :download => File.basename(file),
@@ -55,7 +55,7 @@ module SubmittedContentHelper
       begin
         if File.exist?(file)
           html += link_to image_tag('/assets/tree_view/List-submisstions-24.png'),
-                          :controller => 'submitted_content',
+                          :controller => 'submitted_folder',
                           :action => 'download',
                           :id => participant.id,
                           :download => File.basename(file),
@@ -65,12 +65,6 @@ module SubmittedContentHelper
         flash[:error] = $ERROR_INFO
       end
     end
-    html
-  end
-
-  def display_hyperlink_in_peer_review_question(comments)
-    html = ''
-    html += link_to image_tag('/assets/tree_view/List-hyperlinks-24.png'), comments, target: '_blank'
     html
   end
 
@@ -87,11 +81,11 @@ module SubmittedContentHelper
       ret += "<input type=hidden id='filenames_#{index}' name='filenames[#{index}]' value='" + File.dirname(disp) + '/' + File.basename(path) + "'>"
       if File.ftype(disp) == 'directory'
         ret += "<a title='Expand/Collapse' href='#' onclick='javascript:collapseSubDirectory(#{index}); return false;'><img id='expand.#{index}' alt='Expand/Collapse' title='Expand/Collapse' src='/assets/up.png'></a>&nbsp;"
-        ret += link_to path, :controller => 'submitted_content', :action => 'edit', :id => participant.id, :download => File.basename(path), 'current_folder[name]' => File.dirname(disp)
+        ret += link_to path, :controller => 'submitted_folder', :action => 'edit', :id => participant.id, :download => File.basename(path), 'current_folder[name]' => File.dirname(disp)
         ret += '</li>'
         ret += list_sub_directories(disp, participant)
       else
-        ret += link_to path, :controller => 'submitted_content', :action => 'edit', :id => participant.id, :download => File.basename(path), 'current_folder[name]' => File.dirname(disp)
+        ret += link_to path, :controller => 'submitted_folder', :action => 'edit', :id => participant.id, :download => File.basename(path), 'current_folder[name]' => File.dirname(disp)
         ret += '</li>'
       end
     end

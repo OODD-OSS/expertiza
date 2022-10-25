@@ -2,7 +2,7 @@ class ResponseController < ApplicationController
   include AuthorizationHelper
   include ResponseHelper
 
-  helper :submitted_content
+  helper :submitted_folder
   helper :file
 
   before_action :authorize_show_calibration_results, only: %i[show_calibration_results_for_student]
@@ -274,7 +274,7 @@ class ResponseController < ApplicationController
     when 'assignment_edit'
       redirect_to controller: 'assignments', action: 'edit', id: @map.response_map.assignment.id
     when 'selfreview'
-      redirect_to controller: 'submitted_content', action: 'edit', id: @map.response_map.reviewer_id
+      redirect_to controller: 'submitted_folder', action: 'edit', id: @map.response_map.reviewer_id
     when 'survey'
       redirect_to controller: 'survey_deployment', action: 'pending_surveys'
     when 'bookmark'

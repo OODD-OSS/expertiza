@@ -2,7 +2,7 @@
 <b><%=t ".quiz_score"%><%= @quiz_score %>%</b>
 
 <%  @assignment = Assignment.find(@participant.parent_id)%>
-<%= render :partial => 'submitted_content/main', :locals => {:participant => @participant, :stage => ""} %>
+<%= render :partial => 'submitted_folder/main', :locals => {:participant => @participant, :stage => ""} %>
 
 <br>
 <% i = 1 %>

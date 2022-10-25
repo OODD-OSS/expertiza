@@ -33,7 +33,7 @@
     <br />
   <% end %>
   <br/>
-  <%= link_to 'Back', :controller => 'submitted_content', :action => 'edit', :id => params[:pid] %>
+  <%= link_to 'Back', :controller => 'submitted_folder', :action => 'edit', :id => params[:pid] %>
 <% else %>
   <%= render :partial => 'questionnaire' %>
   <br />

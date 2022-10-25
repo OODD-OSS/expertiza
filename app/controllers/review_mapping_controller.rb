@@ -3,7 +3,7 @@ class ReviewMappingController < ApplicationController
 
   autocomplete :user, :name
   # helper :dynamic_review_assignment
-  helper :submitted_content
+  helper :submitted_folder
   # including the following helper to refactor the code in response_report function
   # include ReportFormatterHelper
 
@@ -56,7 +56,7 @@ class ReviewMappingController < ApplicationController
     topic_id = params[:topic_id]
     user_id = User.where(name: params[:user][:name]).first.id
     # If instructor want to assign one student to review his/her own artifact,
-    # it should be counted as "self-review" and we need to make /app/views/submitted_content/_selfreview.html.erb work.
+    # it should be counted as "self-review" and we need to make /app/views/submitted_folder/_selfreview.html.erb work.
     if TeamsUser.exists?(team_id: params[:contributor_id], user_id: user_id)
       flash[:error] = 'You cannot assign this student to review his/her own artifact.'
     else
@@ -445,9 +445,9 @@ class ReviewMappingController < ApplicationController
       else
         raise 'Self review already assigned!'
       end
-      redirect_to controller: 'submitted_content', action: 'edit', id: params[:reviewer_id]
+      redirect_to controller: 'submitted_folder', action: 'edit', id: params[:reviewer_id]
     rescue StandardError => e
-      redirect_to controller: 'submitted_content', action: 'edit', id: params[:reviewer_id], msg: e.message
+      redirect_to controller: 'submitted_folder', action: 'edit', id: params[:reviewer_id], msg: e.message
     end
   end
 

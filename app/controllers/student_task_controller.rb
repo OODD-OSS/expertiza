@@ -1,7 +1,7 @@
 class StudentTaskController < ApplicationController
   include AuthorizationHelper
 
-  helper :submitted_content
+  helper :submitted_folder
 
   def action_allowed?
     current_user_has_student_privileges?

@@ -279,7 +279,7 @@ hi_IN:
       leave_team: "टीम छोड़ो"
       edit_name: "नाम परिवर्तन"
 
-  submitted_content:
+  submitted_folder:
     edit:
       back: "वापस पीछे"
 
@@ -290,12 +290,7 @@ hi_IN:
       self_review: "स्वयं की समीक्षा:"
       work_not_submitted: "(कार्य अभी तक सबमिट नहीं किया गया है)"
 
-    hyperlink:
-      hyperlink_action: "हाइपरलिंक एक्शन्स:"
-      hide_link: "लिंक छुपाएं"
-
     main:
-      submit_hyperlink: "हाइपरलिंक सबमिट करें:"
       quiz: "प्रश्नोत्तरी:"
       view_quiz: "प्रश्नोत्तरी देखें"
       edit_quiz: "प्रश्नोत्तरी बदलें"
@@ -303,6 +298,14 @@ hi_IN:
     submitted_files:
       submit_file: "फाइल जमा करें:"
       or: "या"
+
+  submitted_hyperlink:
+    hyperlink:
+      hyperlink_action: "हाइपरलिंक एक्शन्स:"
+      hide_link: "लिंक छुपाएं"
+
+    main:
+      submit_hyperlink: "हाइपरलिंक सबमिट करें:"
 
   student_review:
     list:

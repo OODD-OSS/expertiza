@@ -332,10 +332,10 @@
   <% end %>
   <% if @assignment.teams? %>
     <% topic_id = SignedUpTeam.topic_id(@participant.parent_id, @participant.user_id) %>
-    <%= render :partial => 'submitted_content/main', :locals => { :reviewee_participant => @contributor.participants.first, :participant => @contributor.participants.first, :stage => @assignment.current_stage(topic_id) } %>
+    <%= render :partial => 'submitted_folder/main', :locals => { :reviewee_participant => @contributor.participants.first, :participant => @contributor.participants.first, :stage => @assignment.current_stage(topic_id) } %>
   <% else %>
     <% topic_id = SignedUpTeam.topic_id(@participant.parent_id, @participant.user_id) %>
-    <%= render :partial => 'submitted_content/main', :locals => { :participant => @contributor, :stage => @assignment.current_stage(topic_id) } %>
+    <%= render :partial => 'submitted_folder/main', :locals => { :participant => @contributor, :stage => @assignment.current_stage(topic_id) } %>
   <% end %>
   <hr/>
 <% end %>
@@ -451,7 +451,7 @@
     <% elsif params[:action] == 'edit' %>
       <% response_map_id = Response.find(params[:id]).response_map.id %>
     <% end %>
-    <%= render partial: 'submitted_content/submitted_files', locals: { participant: @participant, stage: @stage, origin: 'review', response_map_id: response_map_id } %>
+    <%= render partial: 'submitted_folder/submitted_files', locals: { participant: @participant, stage: @stage, origin: 'review', response_map_id: response_map_id } %>
   <% end %>
 <% end %>
 <%= @map.show_feedback(@response) %>

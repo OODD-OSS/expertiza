@@ -179,7 +179,8 @@ development:
       invitation: false
       survey: false
       password_retrieval: true
-      submitted_content: false
+      submitted_folder: false
+      submitted_hyperlink: true
       eula: false
       student_review: false
       publishing: false
@@ -447,7 +448,8 @@ test:
       invitation: false
       survey: false
       password_retrieval: true
-      submitted_content: false
+      submitted_folder: false
+      submitted_hyperlink: true
       eula: false
       student_review: false
       publishing: false
@@ -715,7 +717,8 @@ production:
       invitation: false
       survey: false
       password_retrieval: true
-      submitted_content: false
+      submitted_folder: false
+      submitted_hyperlink: true
       eula: false
       student_review: false
       publishing: false

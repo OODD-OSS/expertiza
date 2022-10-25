@@ -208,7 +208,7 @@ describe QuestionnairesController do
       end
 
       context 'when questionnaire type is not QuizQuestionnaire' do
-        it 'redirects to submitted_content#edit page' do
+        it 'redirects to submitted_folder#edit page' do
           request_params = { aid: 1,
                              pid: 1,
                              questionnaire: { name: review_questionnaire.name,

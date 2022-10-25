@@ -2,7 +2,7 @@ class ReportsController < ApplicationController
   include AuthorizationHelper
 
   autocomplete :user, :name
-  helper :submitted_content
+  helper :submitted_folder
   include ReportFormatterHelper
 
   # reports are allowed to be viewed by  only by TA, instructor and administrator

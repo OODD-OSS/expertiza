@@ -36,7 +36,7 @@ describe 'Airbrake exception errors' do
   end
 
   # Airbrake-1780737855340413304
-  it 'will redirect to submitted_content#view page if trying to save quiz but w/o questions' do
+  it 'will redirect to submitted_folder#view page if trying to save quiz but w/o questions' do
     assignment = Assignment.first
     assignment.update_attributes(require_quiz: true)
     login_as 'student2064'
@@ -55,7 +55,7 @@ describe 'Airbrake exception errors' do
     click_link 'Edit quiz'
     expect(page).to have_content('Edit Quiz')
     click_button 'Save quiz'
-    expect(page).to have_current_path("/submitted_content/#{participant_id}/edit?view=true")
+    expect(page).to have_current_path("/submitted_folder/#{participant_id}/edit?view=true")
   end
 
   # Airbrake-1800240536513675372

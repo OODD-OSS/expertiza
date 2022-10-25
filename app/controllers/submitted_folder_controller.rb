@@ -1,10 +1,10 @@
-class SubmittedContentController < ApplicationController
+class SubmittedFolderController < ApplicationController
   require 'mimemagic'
   require 'mimemagic/overlay'
 
   include AuthorizationHelper
 
-  before_action :ensure_current_user_is_participant, only: %i[edit view submit_hyperlink folder_action]
+  before_action :ensure_current_user_is_participant, only: %i[edit view folder_action]
 
   # Validate whether a particular action is allowed by the current user or not based on the privileges
   def action_allowed?
@@ -12,7 +12,7 @@ class SubmittedContentController < ApplicationController
     when 'edit'
       current_user_has_student_privileges? &&
         are_needed_authorizations_present?(params[:id], 'reader', 'reviewer')
-    when 'submit_file', 'submit_hyperlink'
+    when 'submit_file'
       current_user_has_student_privileges? &&
         one_team_can_submit_work?
     else
@@ -29,7 +29,9 @@ class SubmittedContentController < ApplicationController
   def edit
     @assignment = @participant.assignment
     # ACS We have to check if this participant has team or not
-    SignUpSheet.signup_team(@assignment.id, @participant.user_id, nil) if @participant.team.nil?
+    if @participant.team.nil?
+      SignUpSheet.signup_team(@assignment.id, @participant.user_id, nil)
+    end
     # @can_submit is the flag indicating if the user can submit or not in current stage
     @can_submit = !params.key?(:view)
     @stage = @assignment.current_stage(SignedUpTeam.topic_id(@participant.parent_id, @participant.user_id))
@@ -45,59 +47,11 @@ class SubmittedContentController < ApplicationController
     redirect_to action: 'edit', id: params[:id], view: true
   end
 
-  # submit_hyperlink is called when a new hyperlink is added to an assignment
-  def submit_hyperlink
-    team = @participant.team
-    team_hyperlinks = team.hyperlinks
-    if team_hyperlinks.include?(params['submission'])
-      ExpertizaLogger.error LoggerMessage.new(controller_name, @participant.name, 'You or your teammate(s) have already submitted the same hyperlink.', request)
-      flash[:error] = 'You or your teammate(s) have already submitted the same hyperlink.'
-    else
-      begin
-        team.submit_hyperlink(params['submission'])
-        SubmissionRecord.create(team_id: team.id,
-                                content: params['submission'],
-                                user: @participant.name,
-                                assignment_id: @participant.assignment.id,
-                                operation: 'Submit Hyperlink')
-      rescue StandardError
-        ExpertizaLogger.error LoggerMessage.new(controller_name, @participant.name, "The URL or URI is invalid. Reason: #{$ERROR_INFO}", request)
-        flash[:error] = "The URL or URI is invalid. Reason: #{$ERROR_INFO}"
-      end
-      @participant.mail_assigned_reviewers
-      ExpertizaLogger.info LoggerMessage.new(controller_name, @participant.name, 'The link has been successfully submitted.', request)
-      undo_link('The link has been successfully submitted.')
-    end
-    redirect_to action: 'edit', id: @participant.id
-  end
-
-  # remove_hypelink is called when an existing hyperlink is removed from an assignment
-  def remove_hyperlink
-    @participant = AssignmentParticipant.find(params[:hyperlinks][:participant_id])
-    return unless current_user_id?(@participant.user_id)
-
-    team = @participant.team
-    hyperlink_to_delete = team.hyperlinks[params['chk_links'].to_i]
-    team.remove_hyperlink(hyperlink_to_delete)
-    ExpertizaLogger.info LoggerMessage.new(controller_name, @participant.name, 'The link has been successfully removed.', request)
-    undo_link('The link has been successfully removed.')
-    # determine if the user should be redirected to "edit" or  "view" based on the current deadline
-    topic_id = SignedUpTeam.topic_id(@participant.parent_id, @participant.user_id)
-    assignment = Assignment.find(@participant.parent_id)
-    SubmissionRecord.create(team_id: team.id,
-                            content: hyperlink_to_delete,
-                            user: @participant.name,
-                            assignment_id: assignment.id,
-                            operation: 'Remove Hyperlink')
-    action = (assignment.submission_allowed(topic_id) ? 'edit' : 'view')
-    redirect_to action: action, id: @participant.id
-  end
-
   # submit_file is called when a new file is uploaded to an assignment
   def submit_file
     participant = AssignmentParticipant.find(params[:id])
     unless current_user_id?(participant.user_id)
-      flash[:error] = "Authentication Error"
+      flash[:error] = 'Authentication Error'
       redirect_to action: 'edit', id: participant.id
       return
     end
@@ -105,7 +59,7 @@ class SubmittedContentController < ApplicationController
     file = params[:uploaded_file]
     file_size_limit = 5
 
-    if (!check_file(file, file_size_limit))
+    unless check_file(file, file_size_limit)
       redirect_to action: 'edit', id: participant.id
       return
     end
@@ -116,14 +70,16 @@ class SubmittedContentController < ApplicationController
     sanitized_file_path = get_sanitized_file_path(file)
     File.open(sanitized_file_path, 'wb') { |f| f.write(file_content) }
     if params['unzip']
-      SubmittedContentHelper.unzip_file(sanitized_file_path, curr_directory, true) if file_type(safe_filename) == 'zip'
+      if file_type(safe_filename) == 'zip'
+        SubmittedContentHelper.unzip_file(sanitized_file_path, curr_directory, true)
+      end
     end
     assignment = Assignment.find(participant.parent_id)
     SubmissionRecord.create(team_id: participant.team.id,
                             content: sanitized_file_path,
                             user: participant.name,
                             assignment_id: assignment.id,
-                            operation: "Submit File")
+                            operation: 'Submit File')
     ExpertizaLogger.info LoggerMessage.new(controller_name, participant.name, 'The file has been submitted.', request)
 
     # Notify all reviewers assigned to this reviewee
@@ -152,7 +108,7 @@ class SubmittedContentController < ApplicationController
       return false
     end
 
-    return true
+    true
   end
 
   # Sanitize and return the file name
@@ -160,26 +116,30 @@ class SubmittedContentController < ApplicationController
     safe_filename = file.original_filename.tr('\\', '/')
     safe_filename = FileHelper.sanitize_filename(safe_filename) # new code to sanitize file path before upload*
     sanitized_file_path = curr_directory + File.split(safe_filename).last.tr(' ', '_') # safe_filename #curr_directory
-    return sanitized_file_path
+    sanitized_file_path
   end
 
   # Get current directory path
   def get_curr_directory(participant)
     current_folder = DisplayOption.new
     current_folder.name = '/'
-    current_folder.name = FileHelper.sanitize_folder(params[:current_folder][:name]) if params[:current_folder]
+    if params[:current_folder]
+      current_folder.name = FileHelper.sanitize_folder(params[:current_folder][:name])
+    end
     curr_directory = if params[:origin] == 'review'
                        participant.review_file_path(params[:response_map_id]).to_s + current_folder.name
                      else
                        participant.team.path.to_s + current_folder.name
                      end
-    return curr_directory
+    curr_directory
   end
 
   def folder_action
     @current_folder = DisplayOption.new
     @current_folder.name = '/'
-    @current_folder.name = FileHelper.sanitize_folder(params[:current_folder][:name]) if params[:current_folder]
+    if params[:current_folder]
+      @current_folder.name = FileHelper.sanitize_folder(params[:current_folder][:name])
+    end
     if params[:faction][:delete]
       delete_selected_files
     elsif params[:faction][:rename]
@@ -198,8 +158,12 @@ class SubmittedContentController < ApplicationController
     file_name = params[:download]
     raise 'Folder_name is nil.' if folder_name.nil?
     raise 'File_name is nil.' if file_name.nil?
-    raise 'Cannot send a whole folder.' if File.directory?(folder_name + '/' + file_name)
-    raise 'File does not exist.' unless File.exist?(folder_name + '/' + file_name)
+    if File.directory?(folder_name + '/' + file_name)
+      raise 'Cannot send a whole folder.'
+    end
+    unless File.exist?(folder_name + '/' + file_name)
+      raise 'File does not exist.'
+    end
 
     send_file(folder_name + '/' + file_name, disposition: 'inline')
   rescue StandardError => e
@@ -247,7 +211,9 @@ class SubmittedContentController < ApplicationController
     old_filename = params[:directories][params[:chk_files]] + '/' + params[:filenames][params[:chk_files]]
     new_filename = params[:directories][params[:chk_files]] + '/' + FileHelper.sanitize_filename(params[:faction][:rename])
     begin
-      raise "A file already exists in this directory with the name \"#{params[:faction][:rename]}\"" if File.exist?(new_filename)
+      if File.exist?(new_filename)
+        raise "A file already exists in this directory with the name \"#{params[:faction][:rename]}\""
+      end
 
       File.send('rename', old_filename, new_filename)
     rescue StandardError => e

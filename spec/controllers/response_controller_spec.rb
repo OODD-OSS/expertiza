@@ -414,10 +414,10 @@ describe ResponseController do
     end
 
     context 'when request_params[:return] is selfreview' do
-      it 'redirects to submitted_content#edit page' do
+      it 'redirects to submitted_folder#edit page' do
         @request_params[:return] = 'selfreview'
         get :redirect, params: @request_params
-        expect(response).to redirect_to('/submitted_content/1/edit')
+        expect(response).to redirect_to('/submitted_folder/1/edit')
       end
     end
 

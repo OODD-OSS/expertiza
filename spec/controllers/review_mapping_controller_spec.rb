@@ -654,7 +654,7 @@ describe ReviewMappingController do
     end
 
     context 'when self review response map does not exist' do
-      it 'creates a new record and redirects to submitted_content#edit page' do
+      it 'creates a new record and redirects to submitted_folder#edit page' do
         allow(SelfReviewResponseMap).to receive(:where).with(reviewee_id: 1, reviewer_id: '1').and_return([nil])
         allow(SelfReviewResponseMap).to receive(:create).with(reviewee_id: 1, reviewer_id: '1', reviewed_object_id: 1).and_return(true)
         request_params = {
@@ -663,12 +663,12 @@ describe ReviewMappingController do
           reviewer_id: 1
         }
         post :start_self_review, params: request_params
-        expect(response).to redirect_to('/submitted_content/1/edit')
+        expect(response).to redirect_to('/submitted_folder/1/edit')
       end
     end
 
     context 'when self review response map exists' do
-      it 'redirects to submitted_content#edit page' do
+      it 'redirects to submitted_folder#edit page' do
         allow(SelfReviewResponseMap).to receive(:where).with(reviewee_id: 1, reviewer_id: '1').and_return([double('SelfReviewResponseMap')])
         request_params = {
           assignment_id: 1,
@@ -676,7 +676,7 @@ describe ReviewMappingController do
           reviewer_id: 1
         }
         post :start_self_review, params: request_params
-        expect(response).to redirect_to('/submitted_content/1/edit?msg=Self+review+already+assigned%21')
+        expect(response).to redirect_to('/submitted_folder/1/edit?msg=Self+review+already+assigned%21')
       end
     end
   end

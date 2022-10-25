@@ -288,7 +288,7 @@ en_US:
       leave_team: "Leave team"
       edit_name: "Edit name"
 
-  submitted_content:
+  submitted_folder:
     edit:
       back: "Back"
 
@@ -299,12 +299,7 @@ en_US:
       self_review: "Self Review:"
       work_not_submitted: "(Work has not yet been submitted)"
 
-    hyperlink:
-      hyperlink_action: "Hyperlink Actions:"
-      hide_link: "hide links"
-
     main:
-      submit_hyperlink: "Submit a hyperlink:"
       quiz: "Quiz:"
       view_quiz: "View quiz"
       edit_quiz: "Edit quiz"
@@ -312,6 +307,14 @@ en_US:
     submitted_files:
       submit_file: "Submit a file:"
       or: "or"
+
+  submitted_hyperlink:
+    hyperlink:
+      hyperlink_action: "Hyperlink Actions:"
+      hide_link: "hide links"
+
+    main:
+      submit_hyperlink: "Submit a hyperlink:"
 
   student_review:
     list:

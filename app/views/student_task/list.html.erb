@@ -11,7 +11,7 @@
       controller = ""
       action = ""
       if stage == "submission" || stage == 'signup'
-        controller = "submitted_content"
+        controller = "submitted_folder"
         action = "edit"
 
         # check if the assignment has a sign-up sheet
@@ -62,7 +62,7 @@
     controller = ""
     action = ""
     if stage == "submission"
-      controller = "submitted_content"
+      controller = "submitted_folder"
       action = "edit"
     elsif stage == "review" or stage == "metareview"
       controller = "student_review"

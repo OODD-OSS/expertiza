@@ -1,4 +1,4 @@
-describe SubmittedContentController do
+describe SubmittedFolderController do
   let(:admin) { build(:admin, id: 3) }
   let(:super_admin) { build(:superadmin, id: 1, role_id: 5) }
   let(:instructor1) { build(:instructor, id: 10, role_id: 3, parent_id: 3, name: 'Instructor1') }
@@ -52,58 +52,10 @@ describe SubmittedContentController do
       expect(controller.send(:controller_locale)).to eq(I18n.default_locale)
     end
   end
-  describe '#submit_hyperlink' do
-    context 'current user is participant and submits hyperlink' do
-      before(:each) do
-        allow(AssignmentParticipant).to receive(:find).and_return(participant)
-        stub_current_user(student1, student1.role.name, student1.role)
-        allow(participant).to receive(:team).and_return(team)
-        allow(participant).to receive(:name).and_return('Name')
-      end
-      it 'flashes error if a duplicate hyperlink is submitted' do
-        allow(team).to receive(:hyperlinks).and_return(['google.com'])
-        params = {submission: "google.com", id: 21}
-        response = get :submit_hyperlink, params: params
-        expect(response).to redirect_to(action: :edit, id: 1)
-        expect(flash[:error]).to eq 'You or your teammate(s) have already submitted the same hyperlink.'
-      end
-      it 'flashes error if url is invalid' do
-        allow(team).to receive(:hyperlinks).and_return([])
-        params = {submission: "abc123", id: 21}
-        response = get :submit_hyperlink, params: params
-        expect(response).to redirect_to(action: :edit, id: 1)
-        expect(flash[:error]).to be_present # not checking message content since it uses #{$ERROR_INFO}
-      end
-    end
-  end
-  describe '#remove_hyperlink' do
-    #NOTE - this method is not currently used, the below context is a start
-    #       at proposed tests that may be useful in the future
-    context 'current user is participant' do
-      before(:each) do
-        #allow(AssignmentParticipant).to receive(:find).and_return(participant)
-        #stub_current_user(student1, student1.role.name, student1.role)
-        #allow(participant).to receive(:team).and_return(team)
-        #allow(team).to receive(:hyperlinks).and_return(['google.com'])
-      end
-      it 'redirects to edit if submissions are allowed' #do
-        #params = {id: 1}
-        #allow(assignment).to receive(:submission_allowed).and_return(true)
-        #response = get :remove_hyperlink, params
-        #expect(response).to redirect_to(action: :edit, id: 1)
-      #end
-      it 'redirects to view if submissions are not allowed' #do
-        #params = {id: 1}
-        #allow(assignment).to receive(:submission_allowed).and_return(true)
-        #response = get :remove_hyperlink, params
-        #expect(response).to redirect_to(action: :view, id: 1)
-      #end
-    end
-  end
   describe '#submit_file' do
     context 'current user does not match up with the participant' do
       # this test has problems after rails 5.1 migration, getting 'undefined method 'size' for nil:NilClass' error
-      # when 'check_content_size' method is called in submitted_content_controller, doesn't seem to be a problem in
+      # when 'check_content_size' method is called in submitted_folder_controller, doesn't seem to be a problem in
       # other submit_file tests that should call the same method though...
       it 'renders edit template' #do
         #allow(AssignmentParticipant).to receive(:find).and_return(participant)
